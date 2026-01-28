@@ -43,7 +43,7 @@ export default function TimesheetDetailPage() {
 
     const fetchTasks = useCallback(async (ts: Timesheet) => {
         const res = await fetch(
-            `/api/tasks?timesheetId=${ts.id}&startDate=${ts.startDate}&endDate=${ts.endDate}&status=${ts.status}`
+            `/api/tasks?timesheetId=${ts.id}&startDate=${ts.startDate}&endDate=${ts.endDate}&status=${ts.status}&hours=${ts.hours}`
         );
         if (res.ok) {
             const data = await res.json();
@@ -102,7 +102,25 @@ export default function TimesheetDetailPage() {
         });
 
         if (res.ok) {
-            if (timesheet) await fetchTasks(timesheet);
+            const savedTask = await res.json();
+            if (timesheet) {
+                // Calculate new total hours to sync with timesheet
+                const updatedTasks = isEditing
+                    ? tasks.map(t => t.id === selectedTask.id ? savedTask : t)
+                    : [...tasks, savedTask];
+
+                const newTotalHours = updatedTasks.reduce((sum, t) => sum + t.hours, 0);
+
+                // Update timesheet on server to keep dashboard in sync
+                await fetch(`/api/timesheets?id=${timesheet.id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ hours: newTotalHours }),
+                });
+
+                await fetchTasks(timesheet);
+                await fetchTimesheet();
+            }
             setIsModalOpen(false);
             setSelectedTask(null);
         }
@@ -111,7 +129,18 @@ export default function TimesheetDetailPage() {
     const handleDeleteTask = async (taskId: string) => {
         const res = await fetch(`/api/tasks?id=${taskId}`, { method: 'DELETE' });
         if (res.ok && timesheet) {
+            const updatedTasks = tasks.filter(t => t.id !== taskId);
+            const newTotalHours = updatedTasks.reduce((sum, t) => sum + t.hours, 0);
+
+            // Update timesheet on server to keep dashboard in sync
+            await fetch(`/api/timesheets?id=${timesheet.id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ hours: newTotalHours }),
+            });
+
             await fetchTasks(timesheet);
+            await fetchTimesheet();
         }
         setActiveMenu(null);
     };
