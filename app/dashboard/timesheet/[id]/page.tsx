@@ -167,19 +167,30 @@ export default function TimesheetDetailPage() {
                         </p>
                     </div>
 
-                    <div className="text-right">
-                        <div className="text-sm font-medium text-gray-900">
-                            {totalHours}/40 hrs
-                        </div>
-                        <div className="text-xs text-gray-500 mb-1">100%</div>
-                        <div className="w-32 h-1.5 bg-gray-200 rounded-full overflow-hidden">
-                            <div
-                                className={`h-full rounded-full transition-all ${progressPercent >= 100 ? 'bg-green-500' :
-                                    progressPercent >= 50 ? 'bg-yellow-500' :
-                                        'bg-red-500'
-                                    }`}
-                                style={{ width: `${progressPercent}%` }}
-                            />
+                    <div className="flex-1 max-w-sm">
+                        <div className="flex items-center gap-3">
+                            <div className="flex-1 relative mb-8">
+                                {/* Tooltip */}
+                                <div
+                                    className="absolute bottom-full mb-2 transform -translate-x-1/2 flex flex-col items-center z-10"
+                                    style={{ left: `${progressPercent}%` }}
+                                >
+                                    <div className="bg-white border border-gray-100 px-7 py-2 rounded-lg shadow-md text-sm font-semibold text-gray-900 whitespace-nowrap">
+                                        {totalHours}/40 hrs
+                                    </div>
+                                    <div className="w-2.5 h-2.5 bg-white border-r border-b border-gray-100 transform rotate-45 -mt-1.5 shadow-sm"></div>
+                                </div>
+
+                                {/* Progress Bar Track */}
+                                <div className="h-2.5 bg-gray-100 rounded-full overflow-hidden">
+                                    <div
+                                        className={`h-full transition-all duration-700 ease-out rounded-full ${progressPercent >= 100 ? 'bg-green-500' : 'bg-[#FF7F3E]'
+                                            }`}
+                                        style={{ width: `${progressPercent}%` }}
+                                    />
+                                </div>
+                            </div>
+                            <span className="text-sm font-semibold text-gray-400 mb-8">100%</span>
                         </div>
                     </div>
                 </div>
