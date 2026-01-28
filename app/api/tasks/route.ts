@@ -2,26 +2,34 @@ import { Task, sampleProjects, sampleWorkTypes } from "@/app/types/task";
 import { NextRequest, NextResponse } from "next/server";
 import { v4 as uuidv4 } from "uuid";
 
-function generateSampleTasks(timesheetId: string, startDate: string, endDate: string): Task[] {
+function generateSampleTasks(timesheetId: string, startDate: string, endDate: string, targetHours: number): Task[] {
     const tasks: Task[] = [];
     const start = new Date(startDate);
     const end = new Date(endDate);
+    const dates: string[] = [];
 
     for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
-        const dateStr = d.toISOString().split('T')[0];
-        const numTasks = Math.floor(Math.random() * 3) + 1; // 1-3 tasks per day
+        dates.push(d.toISOString().split('T')[0]);
+    }
 
-        for (let i = 0; i < numTasks; i++) {
-            tasks.push({
-                id: uuidv4(),
-                timesheetId,
-                date: dateStr,
-                description: "Homepage Development",
-                typeOfWork: sampleWorkTypes[0],
-                hours: 4,
-                project: sampleProjects[Math.floor(Math.random() * sampleProjects.length)],
-            });
-        }
+    if (targetHours <= 0) return [];
+
+    let remainingHours = targetHours;
+    // Distribute hours across days
+    while (remainingHours > 0) {
+        const date = dates[Math.floor(Math.random() * dates.length)];
+        const hours = Math.min(remainingHours, Math.random() < 0.3 ? 8 : 4);
+
+        tasks.push({
+            id: uuidv4(),
+            timesheetId,
+            date,
+            description: "Work Engagement",
+            typeOfWork: sampleWorkTypes[Math.floor(Math.random() * sampleWorkTypes.length)],
+            hours,
+            project: sampleProjects[Math.floor(Math.random() * sampleProjects.length)],
+        });
+        remainingHours -= hours;
     }
 
     return tasks;
@@ -29,12 +37,19 @@ function generateSampleTasks(timesheetId: string, startDate: string, endDate: st
 
 const tasksStore: Map<string, Task[]> = new Map();
 
-function getTasksForTimesheet(timesheetId: string, status?: string, startDate?: string, endDate?: string): Task[] {
+function getTasksForTimesheet(
+    timesheetId: string,
+    status?: string,
+    startDate?: string,
+    endDate?: string,
+    targetHours?: number
+): Task[] {
     if (!tasksStore.has(timesheetId) && startDate && endDate) {
         if (status === "missing") {
             tasksStore.set(timesheetId, []);
         } else {
-            tasksStore.set(timesheetId, generateSampleTasks(timesheetId, startDate, endDate));
+            const hours = targetHours !== undefined ? targetHours : 40;
+            tasksStore.set(timesheetId, generateSampleTasks(timesheetId, startDate, endDate, hours));
         }
     }
     return tasksStore.get(timesheetId) || [];
@@ -51,11 +66,15 @@ export async function GET(req: NextRequest) {
     }
 
     const status = searchParams.get("status");
+    const hoursParam = searchParams.get("hours");
+    const targetHours = hoursParam ? parseFloat(hoursParam) : undefined;
+
     const tasks = getTasksForTimesheet(
         timesheetId,
         status || undefined,
         startDate || undefined,
-        endDate || undefined
+        endDate || undefined,
+        targetHours
     );
 
     const totalHours = tasks.reduce((sum, t) => sum + t.hours, 0);
