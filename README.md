@@ -1,30 +1,53 @@
-# TenTwenty Timesheet Management Project
+# Timesheet Management System
 
-A SaaS-style Timesheet Management Application built with Next.js, featuring authentication, timesheet tracking, and task management.
+A sleek, responsive SaaS-style Timesheet Management application built with Next.js. This project features a dashboard for viewing timesheets and a detailed view for managing daily tasks with a dynamic progress indicator.
 
-## Setup Instructions
+## 🚀 Working Online Demo
+[Link to your hosted demo (e.g., Vercel)]
 
-1.  **Clone the repository** (or ensure you are in the project root).
-2.  **Install dependencies**:npm install
-3.  **Run the development server**:npm run dev
-4.  **Open the application**:
-    - Navigate to [http://localhost:3000](http://localhost:3000) in your browser.
+## 🛠️ Frameworks & Libraries Used
+- **Framework**: [Next.js 15 (App Router)](https://nextjs.org/)
+- **Language**: [TypeScript](https://www.typescriptlang.org/)
+- **Styling**: [Tailwind CSS 4](https://tailwindcss.com/)
+- **Authentication**: [NextAuth.js](https://next-auth.js.org/)
+- **Forms & Validation**: [React Hook Form](https://react-hook-form.com/) with [Zod](https://zod.dev/)
+- **Utilities**: [UUID](https://github.com/uuidjs/uuid)
 
-## Frameworks and Libraries Used
+## 📦 Setup Instructions
 
-- **Next.js (v16.1.6)**: React framework with App Router support.
-- **React (v19.2.3)**: Core UI library.
-- **NextAuth.js (v5.0.0-beta.30)**: Authentication library for Next.js.
-- **Tailwind CSS (v4)**: Utility-first CSS framework for styling.
-- **TypeScript (v5)**: Static type checking.
-- **React Hook Form & Zod**: For form handling and schema-based validation.
-- **UUID**: For generating unique identifiers in the dummy data.
+1. **Clone the repository**:
+   ```bash
+   git clone <your-github-link>
+   cd tentwentyproject
+   ```
 
+2. **Install dependencies**:
+   ```bash
+   npm install
+   ```
 
+3. **Configure Environment Variables**:
+   Create a `.env.local` file in the root directory and add:
+   ```env
+   NEXTAUTH_SECRET=your_nextauth_secret_here
+   NEXTAUTH_URL=http://localhost:3000
+   ```
+   *(Note: You can generate a secret using `openssl rand -base64 32`)*
+
+4. **Run the development server**:
+   ```bash
+   npm run dev
+   ```
+   Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+## 📝 Assumptions & Notes
+- **Mock Data**: For the purpose of this demonstration, the application uses an in-memory store for timesheets and tasks. Data persists as long as the server is running but resets on restart.
+- **Progress Tracking**: The target hours for a "Completed" status is 40 hours. The UI dynamically reflects this through a custom tooltip progress bar that turns green upon completion.
+- **Responsive Design**: The interface is fully responsive, optimized for both desktop and mobile viewing with a focus on premium aesthetics (Inter font, glassmorphism-inspired elements).
+
+## ⏱️ Time Spent
+- **Total Development Time**: Approximately 9.5 hours.
+  
 ## NOTE
-- EMAIL =`test@example.com` 
-- PASSWORD =  `password`.
-
-## Time Spent
-- Time spent: 8hrs
-
+- **Email**: test@example.com
+- **Password**: password
