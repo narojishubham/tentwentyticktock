@@ -21,7 +21,7 @@ export default function TimesheetFilters({
     const [isDateOpen, setIsDateOpen] = useState(false);
 
     const statusOptions = [
-        { value: "all", label: "All Statuses" },
+        { value: "all", label: "Status" },
         { value: "completed", label: "Completed" },
         { value: "incomplete", label: "Incomplete" },
         { value: "missing", label: "Missing" },
@@ -31,7 +31,7 @@ export default function TimesheetFilters({
     const getDateRangeOptions = () => {
         const today = new Date();
         const options = [
-            { value: "all", label: "All Time", startDate: "", endDate: "" },
+            { value: "all", label: "Date Range", startDate: "", endDate: "" },
         ];
 
         // This week
